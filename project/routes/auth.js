@@ -9,9 +9,14 @@ router.post("/Register", async (req, res, next) => {
     // valid parameters
     // username exists
     const users = await DButils.execQuery(
-      "SELECT username FROM dbo.users_tirgul"
+      "SELECT username FROM dbo.users"
     );
 
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let country = req.body.country;
+    let email = req.body.email;
+    let profilePic = req.body.profilePic;
     if (users.find((x) => x.username === req.body.username))
       throw { status: 409, message: "Username taken" };
 
@@ -24,7 +29,8 @@ router.post("/Register", async (req, res, next) => {
 
     // add the new username
     await DButils.execQuery(
-      `INSERT INTO dbo.users_tirgul (username, password) VALUES ('${req.body.username}', '${hash_password}')`
+      `INSERT INTO dbo.users (username, firstName, lastName, country, password, email, profilePic) VALUES
+       ('${req.body.username}','${firstName}','${lastName}','${country}', '${hash_password}','${email}','${profilePic}')`
     );
     res.status(201).send("user created");
   } catch (error) {
@@ -36,7 +42,7 @@ router.post("/Login", async (req, res, next) => {
   try {
     const user = (
       await DButils.execQuery(
-        `SELECT * FROM dbo.users_tirgul WHERE username = '${req.body.username}'`
+        `SELECT * FROM dbo.users WHERE username = '${req.body.username}'`
       )
     )[0];
     // user = user[0];

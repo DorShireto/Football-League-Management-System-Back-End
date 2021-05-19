@@ -20,9 +20,9 @@ async function getLeagueDetails() {
     }
   );
   return {
-    league_name: league.data.data.name,
-    current_season_name: league.data.data.season.data.name,
-    current_stage_name: stage.data.data.name,
+    leagueName: league.data.data.name,
+    seasonName: league.data.data.season.data.name,
+    stageName: stage.data.data.name,
     // next game details should come from DB
   };
 }
