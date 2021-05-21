@@ -17,8 +17,8 @@ app.use(express.json()); // parse application/json
 app.use(
   session({
     cookieName: "session", // the cookie key name
-    // secret: process.env.COOKIE_SECRET, // the encryption key
-    secret: "1234",
+    secret: process.env.COOKIE_SECRET, // the encryption key
+    // secret: "1234",
     duration: 24 * 60 * 60 * 1000, // expired after 20 sec
     activeDuration: 1000 * 60 * 5, // if expiresIn < activeDuration,
     cookie: {
@@ -55,7 +55,6 @@ const teams = require("./routes/teams");
 
 //#endregion
 
-app.use(auth);
 
 
 
@@ -83,6 +82,7 @@ app.get("/alive", (req, res) => res.send("I'm alive"));
 app.use("/users", users);
 app.use("/league", league);
 app.use("/teams", teams);
+app.use(auth);
 
 app.use(function (err, req, res, next) {
   console.error(err);
