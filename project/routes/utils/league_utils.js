@@ -1,6 +1,33 @@
 const axios = require("axios");
 const LEAGUE_ID = 271;
 
+async function getSeason(seasonId) {
+  const season = await axios.get(
+    `https://soccer.sportmonks.com/api/v2.0/seasons/${seasonId}`,
+    {
+      params: {
+        api_token: process.env.api_token,
+
+      },
+    }
+  );
+
+  return season;
+}
+
+async function getStage(stageId) {
+  const stage = await axios.get(
+    `https://soccer.sportmonks.com/api/v2.0/stages/${stageId}`,
+    {
+      params: {
+        api_token: process.env.api_token,
+
+      },
+    }
+  );
+  return stage;
+}
+
 async function getLeagueDetails() {
   const league = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/leagues/${LEAGUE_ID}`,
@@ -27,3 +54,5 @@ async function getLeagueDetails() {
   };
 }
 exports.getLeagueDetails = getLeagueDetails;
+exports.getSeason = getSeason;
+exports.getStage = getStage;
