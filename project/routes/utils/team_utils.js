@@ -22,14 +22,6 @@ const LEAGUE_ID = 271;
 //         //add prev matches
 //         //add futrure matches
 //     }
-
-
-
-
-
-
-
-
 //     let promises = [];
 //     players_ids_list.map((id) =>
 //       promises.push(
@@ -64,3 +56,19 @@ async function getTeamByID(team_ID) {
         //add futrure matchesz
     };
 }
+
+async function getTeam(teamId) {
+    const team = await axios.get(
+        `https://soccer.sportmonks.com/api/v2.0/teams/${teamId}`,
+        {
+            params: {
+                api_token: process.env.api_token,
+            },
+        }
+    );
+    return team;
+}
+
+
+exports.getTeamByID = getTeamByID;
+exports.getTeam = getTeam;
