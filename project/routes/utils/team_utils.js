@@ -48,7 +48,6 @@ async function getTeamByID(team_ID) {
             profilePicURL: image_path,
             position: position_id,
             activeTeam: team.name,
-            //add personalPageURL
         };
         players.push(playerToAdd);
     }
@@ -106,14 +105,31 @@ async function getGamesByTeamName(team_Name) {
         const games = await DButils.execQuery(`SELECT * FROM dbo.matches AS m WHERE m.homeTeam= '${team_Name}' OR m.awayTeam='${team_Name}'`);
         for (let i = 0; i < games.length; i++) {
             let currentGame = games[i];
+            let match = {
+                id: currentGame.id,
+                leagueName: currentGame.leagueName,
+                seasonName: currentGame.seasonName,
+                stageName: currentGame.stageName,
+                homeTeam: currentGame.homeTeam,
+                awayTeam: currentGame.awayTeam,
+                date: new Date(currentGame.date).toJSON().slice(0, 10).replace(/-/g, '/'),
+                time: new Date(currentGame.time).toJSON().slice(11, 19).replace(/-/g, '/'),
+                refereeName: currentGame.refereeName,
+                stadium: currentGame.stadium,
+                result: {
+                    homeScore: currentGame.homeScore,
+                    awayScore: currentGame.awayScore
+                },
+                matchEventCalendar: await matches_utils.getEventCalendar(currentGame.id)
+            };
             // console.log("current game date:", currentGame.date);
             if (Date.parse(currentGame.date) < Date.parse(current_date)) { // past game
                 // console.log("Pre game, curernt date ", current_date, " Game Date: ", currentGame.date);
-                prevGames.push(games[i]);
+                prevGames.push(match);
             }
             else { // future matches
                 // console.log("Future game, curernt date ", current_date, " Game Date: ", currentGame.date);
-                futureGames.push(games[i]);
+                futureGames.push(match);
             }
         }
 
@@ -144,8 +160,8 @@ async function getTeam(teamId) {
 
 async function getTeamsInfo(team_ids_array) {
     let teamsData = [];
-    for (id in team_ids_array) {
-        teamsData.push(getTeamByID(id));
+    for (let i = 0; i < team_ids_array.length; i++) {
+        teamsData.push(await getTeamByID(team_ids_array[i]));
     }
     return teamsData;
     // let teamsData = [];

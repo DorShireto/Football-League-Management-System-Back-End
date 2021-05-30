@@ -3,7 +3,6 @@ var router = express.Router();
 const league_utils = require("./utils/league_utils");
 const matches_utils = require("./utils/matches_utils");
 const DB_utils = require("./utils/DButils");
-
 /**
  * Authenticate all incoming requests by middleware
  */
@@ -25,21 +24,21 @@ router.use(async function (req, res, next) {
 router.get("/getDetails", async (req, res, next) => {
   try {
     let league_details = await league_utils.getLeagueDetails();
-    const match = await DB_utils.execQuery("select TOP 1 * from dbo.matches where matchDate > CURRENT_TIMESTAMP order by matchDate;");
+    const match = await DB_utils.execQuery("select TOP 1 * from dbo.matches where date > CURRENT_TIMESTAMP order by date,time;");
     let next_match = {
       "leagueName": match[0].leagueName,
       "seasonName": match[0].seasonName,
       "stageName": match[0].stageName,
       "homeTeam": match[0].homeTeam,
       "awayTeam": match[0].awayTeam,
-      "date": match[0].matchDate,
+      "date": new Date(match[0].date).toJSON().slice(0, 10).replace(/-/g, '/'),
+      "time": new Date(match[0].time).toJSON().slice(11, 19).replace(/-/g, '/'),
       "refereeName": match[0].refereeName,
       "stadium": match[0].stadium,
       "result": {
         "homeScore": match[0].homeScore,
         "awayScore": match[0].awayScore
       },
-      "matchEventCalendar": match[0].matchEventCalendar
     }
     league_details.nextMatch = next_match;
     res.send(league_details);
@@ -93,7 +92,7 @@ router.post("/updateMatchScore", async (req, res, next) => {
       const user_id = req.session.user_id;
       const role = await DB_utils.execQuery(`SELECT role FROM dbo.users where user_id ='${user_id}';`)
       if (role[0].role != "asso_member")
-        throw { status: 403, message: "only association member can add new matches to the system!" };
+        throw { status: 403, message: "only association member can update matches score!" };
 
     }
 

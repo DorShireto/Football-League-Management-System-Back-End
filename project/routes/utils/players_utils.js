@@ -40,11 +40,58 @@ function extractRelevantPlayerData(players_info) {
       name: fullname,
       image: image_path,
       position: position_id,
-      team_name: name,
-      //todo: add personal page here
+      activeTeam: name,
     };
   });
 }
+
+
+async function getPlayerPreviewInfo(playerId) {
+
+  let player = await axios.get(`${api_domain}/players/${playerId}`, {
+    params: {
+      api_token: process.env.api_token,
+      include: "team",
+    },
+  })
+  return {
+    name: player.data.data.fullname,
+    image: player.data.data.image_path,
+    position: player.data.data.position_id,
+    activeTeam: player.data.data.team.data.name
+  };
+}
+
+
+async function getPlayerFullInfo(playerId) {
+  let player = await axios.get(`${api_domain}/players/${playerId}`, {
+    params: {
+      api_token: process.env.api_token,
+      include: "team",
+    },
+  })
+
+  return {
+    playerPreview: {
+      name: player.data.data.fullname,
+      image: player.data.data.image_path,
+      position: player.data.data.position_id,
+      activeTeam: player.data.data.team.data.name
+    },
+
+    common_name: player.data.data.common_name,
+    first_name: player.data.data.firstname,
+    last_name: player.data.data.lastname,
+    nationality: player.data.data.nationality,
+    birthcountry: player.data.data.birthcountry,
+    height: player.data.data.height,
+    weight: player.data.data.weight
+
+  };
+}
+
+
+
 
 // async function getPlayersByTeam(team_id) {
 //   let player_ids_list = await getPlayerIdsByTeam(team_id);
@@ -54,3 +101,5 @@ function extractRelevantPlayerData(players_info) {
 
 // exports.getPlayersByTeam = getPlayersByTeam;
 exports.getPlayersInfo = getPlayersInfo;
+exports.getPlayerPreviewInfo = getPlayerPreviewInfo;
+exports.getPlayerFullInfo = getPlayerFullInfo;

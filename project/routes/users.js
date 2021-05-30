@@ -95,50 +95,6 @@ router.delete("/removeMatch/:matchId", async (req, res) => {
   }
 });
 router.get("/favoriteMatches", async (req, res, next) => {
-  // get matches from API
-  // try {
-  //   const user_id = req.session.user_id;
-  //   let favorite_matches = {};
-  //   const match_ids = await users_utils.getFavoriteMatches(user_id);
-  //   let match_ids_array = [];
-  //   match_ids.map((element) => match_ids_array.push(element.match_id)); //extracting the matchess ids into array
-  //   const results = await matches_utils.getMatchesInfo(match_ids_array);
-  //   //get league,season,stage name from id
-  //   let match_data_list = [];
-  //   const league = await league_utils.getLeagueDetails();
-  //   const leagueName = league.leagueName;
-  //   for (let i = 0; i < results.length; i++) {
-  //     const result = results[i];
-  //     const season = await league_utils.getSeason(result.season_id);
-  //     const seasonName = season.data.data.name;
-  //     const stage = await league_utils.getStage(result.stage_id);
-  //     const stageName = stage.data.data.name;
-  //     //get localTeam,awayTeam names from ids  
-  //     const homeTeam = await team_utils.getTeam(result.localteam_id);
-  //     const homeTeamName = homeTeam.data.data.name;
-  //     const awayTeam = await team_utils.getTeam(result.visitorteam_id);
-  //     const awayTeamName = awayTeam.data.data.name;
-  //     match_data_list.push(
-  //       {
-  //         leagueName: leagueName,
-  //         seasonName: seasonName,
-  //         stageName: stageName,
-  //         homeTeam: homeTeamName,
-  //         awayTeam: awayTeamName,
-  //         date: results[0].date,
-  //         time: results[0].time,
-  //         //todo: add referee name
-  //       });
-  //   }
-  //   res.status(200).send(
-  //     match_data_list)
-  // }
-  // catch (error) {
-  //   next(error);
-  // }
-
-
-  // get the matches from local db
   try {
     const user_id = req.session.user_id;
     let favorite_matches = {};
@@ -147,8 +103,8 @@ router.get("/favoriteMatches", async (req, res, next) => {
     match_ids.map((element) => match_ids_array.push(element.match_id)); //extracting the matchess ids into array
     const results = await matches_utils.getMatchesInfo(match_ids_array);
     for (let i = 0; i < results.length; i++) {
-      const element = results[i];
-      const matchEventCalendar = await matches_utils.getEventCalendar(matchId);
+      const match = results[i];
+      const matchEventCalendar = await matches_utils.getEventCalendar(match.id);
       results[i].matchEventCalendar = matchEventCalendar;
     }
     if (results.length == 0) {
@@ -194,7 +150,7 @@ router.get("/favoriteTeams", async (req, res, next) => {
     const results = await team_utils.getTeamsInfo(team_ids_array);
     for (let i = 0; i < results.length; i++) {
       const team = results[i];
-      favorite_teams.push(team.data.data);
+      favorite_teams.push(team);
 
     }
     if (results.length == 0) {

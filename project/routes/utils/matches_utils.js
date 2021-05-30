@@ -78,14 +78,16 @@ async function extractRelevantMatchData(matches_info) {
         const { leagueName, seasonName, stageName, awayTeam, homeTeam, date, time, awayScore, homeScore, id, refereeName, stadium } = match_info[0];
         // build matchEventCalendar object
         // let matchEventCalendar = getEventCalendar(id);
+        // let dateTmp = new Date(date).toJSON().slice(0, 10).replace(/-/g, '/');
+        // let timeTmp = new Date(time).toJSON().slice(11, 19).replace(/-/g, '/')
         return {
             leagueName: leagueName,
             seasonName: seasonName,
             stageName: stageName,
             awayTeam: awayTeam,
             homeTeam: homeTeam,
-            date: date,
-            time: time,
+            date: new Date(date).toJSON().slice(0, 10).replace(/-/g, '/'),
+            time: new Date(time).toJSON().slice(11, 19).replace(/-/g, '/'),
             result: {
                 awayScore: awayScore,
                 homeScore: homeScore
@@ -96,7 +98,6 @@ async function extractRelevantMatchData(matches_info) {
         };
     });
 }
-
 // async function getMatchesByTeam(team_id) {
 //     let match_ids_list = await getMatchIdsByTeam(team_id);
 //     let matches_info = await getMatchesInfo(match_ids_list);
