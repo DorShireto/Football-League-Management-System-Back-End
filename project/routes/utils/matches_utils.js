@@ -6,21 +6,22 @@ const { select } = require("async");
 const { decodeBase64 } = require("bcryptjs");
 const { map } = require("methods");
 const api_domain = "https://soccer.sportmonks.com/api/v2.0";
+const MAX_MATCHES_IN_DB = 25000;
 // const TEAM_ID = "85";
 
 async function generateRandId() {
     //generate random match_id
     let random_match_id = Math.floor(Math.random() * MAX_MATCHES_IN_DB);
-    let matchId = await DButils.execQuery(
+    let matchIds = await db_utils.execQuery(
         `select id from dbo.matches where id = '${random_match_id}'`
     );
-    while (matchId.length !== 0) {
+    while (matchIds.length !== 0) {
         random_match_id = Math.floor(Math.random() * MAX_MATCHES_IN_DB);
-        matchId = await DButils.execQuery(
+        matchIds = await db_utils.execQuery(
             `select id from dbo.matches where id = '${random_match_id}'`
         );
     }
-    return matchId;
+    return random_match_id;
 }
 
 async function getMatchIdsByTeam(team_name) {
@@ -74,7 +75,7 @@ async function extractRelevantMatchData(matches_info) {
     //used for matches that come from internal DB
 
     return matches_info.map((match_info) => {
-        const { leagueName, seasonName, stageName, awayTeam, homeTeam, date, time, awayScore, homeScore, id, matchEventCalendarId, refereeName, stadium } = match_info[0];
+        const { leagueName, seasonName, stageName, awayTeam, homeTeam, date, time, awayScore, homeScore, id, refereeName, stadium } = match_info[0];
         // build matchEventCalendar object
         // let matchEventCalendar = getEventCalendar(id);
         return {
@@ -90,7 +91,6 @@ async function extractRelevantMatchData(matches_info) {
                 homeScore: homeScore
             },
             id: id,
-            matchEventCalendarId: matchEventCalendarId,
             refereeName: refereeName,
             stadium: stadium
         };
