@@ -42,6 +42,7 @@ function extractRelevantPlayerData(players_info) {
       position: position_id,
       team_name: name,
       //todo: add personal page here
+
     };
   });
 }
