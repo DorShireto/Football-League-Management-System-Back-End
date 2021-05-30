@@ -12,7 +12,7 @@ const team_utils = require("./utils/team_utils");
  */
 router.use(async function (req, res, next) {
   if (req.session && req.session.user_id) {
-    DButils.execQuery("SELECT user_id FROM users")
+    DButils.execQuery("SELECT user_id FROM dbo.users")
       .then((users) => {
         if (users.find((x) => x.user_id === req.session.user_id)) {
           req.user_id = req.session.user_id;
@@ -148,8 +148,7 @@ router.get("/favoriteMatches", async (req, res, next) => {
     const results = await matches_utils.getMatchesInfo(match_ids_array);
     for (let i = 0; i < results.length; i++) {
       const element = results[i];
-      const matchEventCalendarId = element.matchEventCalendarId;
-      const matchEventCalendar = await matches_utils.getEventCalendar(matchEventCalendarId);
+      const matchEventCalendar = await matches_utils.getEventCalendar(matchId);
       results[i].matchEventCalendar = matchEventCalendar;
     }
     if (results.length == 0) {
