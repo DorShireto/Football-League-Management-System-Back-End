@@ -2,6 +2,7 @@ const axios = require("axios");
 const api_domain = "https://soccer.sportmonks.com/api/v2.0";
 const players_utils = require("./players_utils");
 const DButils = require("./DButils");
+const matches_utils = require("./matches_utils");
 const LEAGUE_ID = 271;
 
 async function getTeams(season_ID) {
@@ -19,8 +20,6 @@ async function getTeams(season_ID) {
     }
     return teamsArray;
 }
-
-
 
 async function getTeamByID(team_ID) {
     console.log(team_ID);
@@ -106,26 +105,65 @@ async function getGamesByTeamName(team_Name) {
     }
 }
 
-
-
-
 async function getTeam(teamId) {
     const team = await axios.get(
         `https://soccer.sportmonks.com/api/v2.0/teams/${teamId}`,
         {
             params: {
                 api_token: process.env.api_token,
+                include: "squad.player",
             },
         }
     );
     return team;
 }
 
+async function getTeamsInfo(team_ids_array) {
+    let teamsData = [];
+    for (id in team_ids_array) {
+        teamsData.push(getTeamByID(id));
+    }
+    return teamsData;
+    // let teamsData = [];
+    // let futureMatches = [];
+    // let prevMatches = [];
+    // for (let i = 0; i < team_ids_array.length; i++) {
+    //     const teamId = team_ids_array[i];
+    //     let team = await getTeam(teamId);
+    //     //get team games from local DB
+    //     const matchIdsObject = await matches_utils.getMatchIdsByTeam(team.data.data.name);
+    //     let matchIds = matchIdsObject[0];
+    //     if (matchIds.length == 0)
+    //         throw new Error("no matches for that team");
+    //     let matches = await matches_utils.getMatchesInfo(matchIds[0]);
+    //     let today = new Date();
+    //     matches.foreach(match => {
+    //         if (match.date > today)
+    //             futureMatches.push(match);
+    //         else
+    //             prevMatches.push(match);
+    //     })
+    //     teamsData.push({
+    //         players: team.squad,
+    //         prevMatches: prevMatches,
+    //         futureMatches: futureMatches,
+    //         name: team.name,
+    //         logoURL: team.logo_path,
+    //     });
+    // }
+    // return teamsData;
+}
+
 
 exports.getTeamByID = getTeamByID;
-exports.getTeam = getTeam;
+exports.getTeams = getTeams;
 exports.getGamesByTeamName = getGamesByTeamName;
 exports.getTeamByName = getTeamByName;
+exports.getTeam = getTeam;
+exports.getTeamsInfo = getTeamsInfo;
+
+
 
 // getTeamByName("Horsens");
 // getTeamByID(211);
+

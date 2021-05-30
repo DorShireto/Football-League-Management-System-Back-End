@@ -23,6 +23,7 @@ router.post("/Register", async (req, res, next) => {
     let country = req.body.country;
     let email = req.body.email;
     let profilePic = req.body.profilePic;
+    let role = req.body.role;
     //hash the password
     let hash_password = bcrypt.hashSync(
       req.body.password,
@@ -42,8 +43,8 @@ router.post("/Register", async (req, res, next) => {
     }
     // add the new username
     await DButils.execQuery(
-      `INSERT INTO dbo.users (user_id, username, firstName, lastName, country, password, email, profilePic) VALUES
-       ('${random_user_id}','${req.body.username}','${firstName}','${lastName}','${country}', '${hash_password}','${email}','${profilePic}')`
+      `INSERT INTO dbo.users (user_id, username, firstName, lastName, country, password, email, profilePic,role) VALUES
+       ('${random_user_id}','${req.body.username}','${firstName}','${lastName}','${country}', '${hash_password}','${email}','${profilePic}','${role}');`
     );
     res.status(201).send("user created");
   } catch (error) {
