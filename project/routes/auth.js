@@ -77,7 +77,9 @@ router.post("/Login", async (req, res, next) => {
 });
 
 router.post("/Logout", function (req, res) {
+  if (!(req.session && req.session.id)) res.status(401).send('unauthorized'); //try to logout when not loged in
   req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
+  // might need to delete local sotrage cache
   res.status(200).send({ success: true, message: "logout succeeded" });
 });
 
