@@ -19,7 +19,8 @@ async function getTeams(season_ID) {
     let teamsArray = [];
     for (let i = 0; i < teams_unfilterd.data.data.length; i++) {
         let team = teams_unfilterd.data.data[i];
-        let teamDetails = getTeamByName(team.name);
+        console.log(team);
+        let teamDetails = await getTeamByID(team.id);
         teamsArray.push(teamDetails);
     }
     return teamsArray;
@@ -30,12 +31,29 @@ async function getTeamByID(team_ID) {
     let team = await axios.get(`${api_domain}/teams/${team_ID}`, {
         params:
         {
+            include: "squad.player",
             api_token: process.env.api_token,
         }
     });
     team = team.data.data;
     let games = await getGamesByTeamName(team.name);
-    let players = players_utils.getPlayersByTeam(team_ID);
+    //build players in team array
+    let squad = team.squad.data;
+    let players = [];
+    for (let i = 0; i < squad.length; i++) {
+        let player = squad[i];
+        let { fullname, image_path, position_id } = player.player.data;
+        let playerToAdd = {
+            fullname: fullname,
+            profilePicURL: image_path,
+            position: position_id,
+            activeTeam: team.name,
+            //add personalPageURL
+        };
+        players.push(playerToAdd);
+    }
+    // let players = await players_utils.getPlayersByTeam(team_ID);
+
     let teamDetails = {
         players: players,
         prevMatches: games.prevGames,
@@ -47,29 +65,31 @@ async function getTeamByID(team_ID) {
     return teamDetails;
 }
 
-async function getTeamByName(team_Name) {
-    console.log("Getting detials on team: ", team_Name, " by name");
-    let team = await axios.get(`${api_domain}/teams/search/${team_Name}`, {
-        params:
-        {
-            api_token: process.env.api_token,
-        }
-    });
 
-    team = team.data.data[0];
-    let team_ID = team.id;
-    let players = await players_utils.getPlayersByTeam(team_ID);
-    let games = await getGamesByTeamName(team_Name)
-    let teamDetails = {
-        players: players,
-        prevMatches: games.prevGames,
-        futureMatches: games.futureGames,
-        name: team.name,
-        logoURL: team.logo_path
-    };
-    console.log(teamDetails)
-    return teamDetails;
-}
+
+// async function getTeamByName(team_Name) {
+//     console.log("Getting detials on team: ", team_Name, " by name");
+//     let team = await axios.get(`${api_domain}/teams/search/${team_Name}`, {
+//         params:
+//         {
+//             api_token: process.env.api_token,
+//         }
+//     });
+//     team = team.data.data[0];
+//     // console.log("Team in getTeamByName:\n", team);
+//     let team_ID = team.id;
+//     let players = await players_utils.getPlayersByTeam(team_ID);
+//     let games = await getGamesByTeamName(team_Name)
+//     let teamDetails = {
+//         players: players,
+//         prevMatches: games.prevGames,
+//         futureMatches: games.futureGames,
+//         name: team.name,
+//         logoURL: team.logo_path
+//     };
+//     console.log(teamDetails)
+//     return teamDetails;
+// }
 
 
 async function getGamesByTeamName(team_Name) {
@@ -162,7 +182,7 @@ async function getTeamsInfo(team_ids_array) {
 exports.getTeamByID = getTeamByID;
 exports.getTeams = getTeams;
 exports.getGamesByTeamName = getGamesByTeamName;
-exports.getTeamByName = getTeamByName;
+// exports.getTeamByName = getTeamByName;
 exports.getTeam = getTeam;
 exports.getTeamsInfo = getTeamsInfo;
 

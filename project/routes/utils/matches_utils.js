@@ -8,7 +8,7 @@ const { map } = require("methods");
 const api_domain = "https://soccer.sportmonks.com/api/v2.0";
 // const TEAM_ID = "85";
 
-function generateRandId() {
+async function generateRandId() {
     //generate random match_id
     let random_match_id = Math.floor(Math.random() * MAX_MATCHES_IN_DB);
     let matchId = await DButils.execQuery(
