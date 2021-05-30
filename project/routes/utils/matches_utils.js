@@ -8,6 +8,21 @@ const { map } = require("methods");
 const api_domain = "https://soccer.sportmonks.com/api/v2.0";
 // const TEAM_ID = "85";
 
+function generateRandId() {
+    //generate random match_id
+    let random_match_id = Math.floor(Math.random() * MAX_MATCHES_IN_DB);
+    let matchId = await DButils.execQuery(
+        `select id from dbo.matches where id = '${random_match_id}'`
+    );
+    while (matchId.length !== 0) {
+        random_match_id = Math.floor(Math.random() * MAX_MATCHES_IN_DB);
+        matchId = await DButils.execQuery(
+            `select id from dbo.matches where id = '${random_match_id}'`
+        );
+    }
+    return matchId;
+}
+
 async function getMatchIdsByTeam(team_name) {
     // let match_ids_list = [];
     // const res = db_utils.execQuery(`select id from dbo.matches where homeTeam='${team_name}' or awayTeam='${team_name}' `);
@@ -91,3 +106,4 @@ async function extractRelevantMatchData(matches_info) {
 exports.getMatchIdsByTeam = getMatchIdsByTeam;
 exports.getMatchesInfo = getMatchesInfo;
 exports.getEventCalendar = getEventCalendar;
+exports.generateRandId = generateRandId;

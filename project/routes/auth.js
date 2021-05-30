@@ -3,7 +3,7 @@ var router = express.Router();
 const DButils = require("../routes/utils/DButils");
 const bcrypt = require("bcryptjs");
 const { select } = require("async");
-let maxUsersInSys = 25000;
+const MAX_USERS_IN_SYS = 25000;
 router.post("/Register", async (req, res, next) => {
   try {
     // parameters exists
@@ -31,7 +31,7 @@ router.post("/Register", async (req, res, next) => {
     );
     req.body.password = hash_password;
     //generate random user_id
-    let random_user_id = Math.floor(Math.random() * maxUsersInSys);
+    let random_user_id = Math.floor(Math.random() * MAX_USERS_IN_SYS);
     let userId = await DButils.execQuery(
       `select user_id from dbo.users where user_id = '${random_user_id}'`
     );
