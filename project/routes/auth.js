@@ -3,7 +3,7 @@ var router = express.Router();
 const DButils = require("../routes/utils/DButils");
 const bcrypt = require("bcryptjs");
 const { select } = require("async");
-let maxUsersInSys = 25000;
+const MAX_USERS_IN_SYS = 25000;
 router.post("/Register", async (req, res, next) => {
   try {
     // parameters exists
@@ -23,6 +23,7 @@ router.post("/Register", async (req, res, next) => {
     let country = req.body.country;
     let email = req.body.email;
     let profilePic = req.body.profilePic;
+    let role = req.body.role;
     //hash the password
     let hash_password = bcrypt.hashSync(
       req.body.password,
@@ -30,7 +31,7 @@ router.post("/Register", async (req, res, next) => {
     );
     req.body.password = hash_password;
     //generate random user_id
-    let random_user_id = Math.floor(Math.random() * maxUsersInSys);
+    let random_user_id = Math.floor(Math.random() * MAX_USERS_IN_SYS);
     let userId = await DButils.execQuery(
       `select user_id from dbo.users where user_id = '${random_user_id}'`
     );
@@ -42,8 +43,8 @@ router.post("/Register", async (req, res, next) => {
     }
     // add the new username
     await DButils.execQuery(
-      `INSERT INTO dbo.users (user_id, username, firstName, lastName, country, password, email, profilePic) VALUES
-       ('${random_user_id}','${req.body.username}','${firstName}','${lastName}','${country}', '${hash_password}','${email}','${profilePic}')`
+      `INSERT INTO dbo.users (user_id, username, firstName, lastName, country, password, email, profilePic,role) VALUES
+       ('${random_user_id}','${req.body.username}','${firstName}','${lastName}','${country}', '${hash_password}','${email}','${profilePic}','${role}');`
     );
     res.status(201).send("user created");
   } catch (error) {
@@ -77,8 +78,11 @@ router.post("/Login", async (req, res, next) => {
 });
 
 router.post("/Logout", function (req, res) {
+  if (!(req.session && req.session.id)) res.status(401).send('unauthorized'); //try to logout when not loged in
   req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
+  // might need to delete local sotrage cache
   res.status(200).send({ success: true, message: "logout succeeded" });
 });
+
 
 module.exports = router;

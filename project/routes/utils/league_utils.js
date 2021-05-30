@@ -38,6 +38,9 @@ async function getLeagueDetails() {
       },
     }
   );
+
+  // console.log("League detials from league_utiles: \n", league);
+
   const stage = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/stages/${league.data.data.current_stage_id}`,
     {
@@ -50,9 +53,12 @@ async function getLeagueDetails() {
     leagueName: league.data.data.name,
     seasonName: league.data.data.season.data.name,
     stageName: stage.data.data.name,
+    current_season_id: league.data.data.current_season_id
     // next game details should come from DB
   };
 }
+
+
 exports.getLeagueDetails = getLeagueDetails;
 exports.getSeason = getSeason;
 exports.getStage = getStage;
