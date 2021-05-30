@@ -39,7 +39,7 @@ async function getLeagueDetails() {
     }
   );
 
-  console.log("League detials from league_utiles: \n", league);
+  // console.log("League detials from league_utiles: \n", league);
 
   const stage = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/stages/${league.data.data.current_stage_id}`,

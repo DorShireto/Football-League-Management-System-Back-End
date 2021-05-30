@@ -6,15 +6,19 @@ const matches_utils = require("./matches_utils");
 const LEAGUE_ID = 271;
 
 async function getTeams(season_ID) {
+    console.log("getTeams season_id: ", season_ID);
     let teams_unfilterd = await axios.get(`${api_domain}/teams/season/${season_ID}`, {
-        param:
+        params:
         {
             api_token: process.env.api_token
         }
     });
 
+    // console.log("teams_unfilterd: \n", teams_unfilterd.data.data);
+
     let teamsArray = [];
-    for (team in teams_unfilterd) {
+    for (let i = 0; i < teams_unfilterd.data.data.length; i++) {
+        let team = teams_unfilterd.data.data[i];
         let teamDetails = getTeamByName(team.name);
         teamsArray.push(teamDetails);
     }
