@@ -9,13 +9,13 @@ const api_domain = "https://soccer.sportmonks.com/api/v2.0";
 const MAX_MATCHES_IN_DB = 25000;
 // const TEAM_ID = "85";
 
+//generate random match_id (from 0 to MAX_MATCHES_IN_DB)
 async function generateRandId() {
-    //generate random match_id
     let random_match_id = Math.floor(Math.random() * MAX_MATCHES_IN_DB);
     let matchIds = await db_utils.execQuery(
         `select id from dbo.matches where id = '${random_match_id}'`
     );
-    while (matchIds.length !== 0) {
+    while (matchIds.length !== 0) { // match id already exists. generate new one until finding unused id.
         random_match_id = Math.floor(Math.random() * MAX_MATCHES_IN_DB);
         matchIds = await db_utils.execQuery(
             `select id from dbo.matches where id = '${random_match_id}'`
@@ -23,12 +23,8 @@ async function generateRandId() {
     }
     return random_match_id;
 }
-
+//get array of matches ids of a team
 async function getMatchIdsByTeam(team_name) {
-    // let match_ids_list = [];
-    // const res = db_utils.execQuery(`select id from dbo.matches where homeTeam='${team_name}' or awayTeam='${team_name}' `);
-    // return match_ids_list;
-
     let promises = [];
     promises.push(
         // get the match from local db
@@ -45,7 +41,7 @@ async function getEventCalendar(matchId) {
     })
 }
 
-
+//get all data about matches
 async function getMatchesInfo(matches_ids_list) {
     let promises = [];
     matches_ids_list.map((id) =>
@@ -57,29 +53,8 @@ async function getMatchesInfo(matches_ids_list) {
 }
 
 async function extractRelevantMatchData(matches_info) {
-    // used for data comes from external API
-    // return matches_info.map((match_info) => {
-    //     const { league_id, season_id, stage_id, localteam_id, visitorteam_id } = match_info.data.data;
-    //     const { date, time } = match_info.data.data.time.starting_at;
-    //     return {
-    //         league_id: league_id,
-    //         season_id: season_id,
-    //         stage_id: stage_id,
-    //         localteam_id: localteam_id,
-    //         visitorteam_id: visitorteam_id,
-    //         date: date,
-    //         time: time,
-    //         //todo: add other things like match result
-    //     };
-    // });
-    //used for matches that come from internal DB
-
     return matches_info.map((match_info) => {
-        const { leagueName, seasonName, stageName, awayTeam, homeTeam, date, time, awayScore, homeScore, id, refereeName, stadium } = match_info[0];
-        // build matchEventCalendar object
-        // let matchEventCalendar = getEventCalendar(id);
-        // let dateTmp = new Date(date).toJSON().slice(0, 10).replace(/-/g, '/');
-        // let timeTmp = new Date(time).toJSON().slice(11, 19).replace(/-/g, '/')
+        const { leagueName, seasonName, stageName, awayTeam, homeTeam, date, time, awayScore, homeScore, id, refereeName, lineReferee1, lineReferee2, stadium } = match_info[0];
         return {
             leagueName: leagueName,
             seasonName: seasonName,
@@ -94,17 +69,39 @@ async function extractRelevantMatchData(matches_info) {
             },
             id: id,
             refereeName: refereeName,
+            lineReferee1: lineReferee1,
+            lineReferee2: lineReferee2,
             stadium: stadium
         };
     });
 }
-// async function getMatchesByTeam(team_id) {
-//     let match_ids_list = await getMatchIdsByTeam(team_id);
-//     let matches_info = await getMatchesInfo(match_ids_list);
-//     return matches_info;
-// }
+
+//returns future match closest to current date time
+async function getNextMatch() {
+    const match = await db_utils.execQuery("select TOP 1 * from dbo.matches where date > CURRENT_TIMESTAMP order by date,time;");
+    let next_match = {
+        leagueName: match[0].leagueName,
+        seasonName: match[0].seasonName,
+        stageName: match[0].stageName,
+        homeTeam: match[0].homeTeam,
+        awayTeam: match[0].awayTeam,
+        date: new Date(match[0].date).toJSON().slice(0, 10).replace(/-/g, '/'),
+        time: new Date(match[0].time).toJSON().slice(11, 19).replace(/-/g, '/'),
+        refereeName: match[0].refereeName,
+        lineReferee1: match[0].lineReferee1,
+        lineReferee2: match[0].lineReferee2,
+        stadium: match[0].stadium,
+        result: {
+            "homeScore": match[0].homeScore,
+            "awayScore": match[0].awayScore
+        },
+        matchEventCalendar: match[0].matchEventCalendar
+    }
+    return next_match;
+}
 
 exports.getMatchIdsByTeam = getMatchIdsByTeam;
 exports.getMatchesInfo = getMatchesInfo;
 exports.getEventCalendar = getEventCalendar;
 exports.generateRandId = generateRandId;
+exports.getNextMatch = getNextMatch;

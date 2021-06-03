@@ -13,9 +13,6 @@ async function getTeams(season_ID) {
             api_token: process.env.api_token
         }
     });
-
-    // console.log("teams_unfilterd: \n", teams_unfilterd.data.data);
-
     let teamsArray = [];
     for (let i = 0; i < teams_unfilterd.data.data.length; i++) {
         let team = teams_unfilterd.data.data[i];
@@ -51,8 +48,6 @@ async function getTeamByID(team_ID) {
         };
         players.push(playerToAdd);
     }
-    // let players = await players_utils.getPlayersByTeam(team_ID);
-
     let teamDetails = {
         players: players,
         prevMatches: games.prevGames,
@@ -65,38 +60,10 @@ async function getTeamByID(team_ID) {
 }
 
 
-
-// async function getTeamByName(team_Name) {
-//     console.log("Getting detials on team: ", team_Name, " by name");
-//     let team = await axios.get(`${api_domain}/teams/search/${team_Name}`, {
-//         params:
-//         {
-//             api_token: process.env.api_token,
-//         }
-//     });
-//     team = team.data.data[0];
-//     // console.log("Team in getTeamByName:\n", team);
-//     let team_ID = team.id;
-//     let players = await players_utils.getPlayersByTeam(team_ID);
-//     let games = await getGamesByTeamName(team_Name)
-//     let teamDetails = {
-//         players: players,
-//         prevMatches: games.prevGames,
-//         futureMatches: games.futureGames,
-//         name: team.name,
-//         logoURL: team.logo_path
-//     };
-//     console.log(teamDetails)
-//     return teamDetails;
-// }
-
-
 async function getGamesByTeamName(team_Name) {
     let date_ob = new Date();
 
     const current_date = date_ob;
-    // const current_date = new Date().toString().replace(/T/, ':').replace(/\.\w*/, '');
-    // console.log("current_date: ", current_date);
     try {
 
         let prev_and_future_games = new Object();
@@ -122,20 +89,15 @@ async function getGamesByTeamName(team_Name) {
                 },
                 matchEventCalendar: await matches_utils.getEventCalendar(currentGame.id)
             };
-            // console.log("current game date:", currentGame.date);
             if (Date.parse(currentGame.date) < Date.parse(current_date)) { // past game
-                // console.log("Pre game, curernt date ", current_date, " Game Date: ", currentGame.date);
                 prevGames.push(match);
             }
             else { // future matches
-                // console.log("Future game, curernt date ", current_date, " Game Date: ", currentGame.date);
                 futureGames.push(match);
             }
         }
-
         prev_and_future_games.prevGames = prevGames;
         prev_and_future_games.futureGames = futureGames;
-        // console.log("Prev and Future Mathces:\n", prev_and_future_games)
         return prev_and_future_games;
 
 

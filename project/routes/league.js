@@ -24,22 +24,7 @@ router.use(async function (req, res, next) {
 router.get("/getDetails", async (req, res, next) => {
   try {
     let league_details = await league_utils.getLeagueDetails();
-    const match = await DB_utils.execQuery("select TOP 1 * from dbo.matches where date > CURRENT_TIMESTAMP order by date,time;");
-    let next_match = {
-      "leagueName": match[0].leagueName,
-      "seasonName": match[0].seasonName,
-      "stageName": match[0].stageName,
-      "homeTeam": match[0].homeTeam,
-      "awayTeam": match[0].awayTeam,
-      "date": new Date(match[0].date).toJSON().slice(0, 10).replace(/-/g, '/'),
-      "time": new Date(match[0].time).toJSON().slice(11, 19).replace(/-/g, '/'),
-      "refereeName": match[0].refereeName,
-      "stadium": match[0].stadium,
-      "result": {
-        "homeScore": match[0].homeScore,
-        "awayScore": match[0].awayScore
-      },
-    }
+    let next_match = matches_utils.getNextMatch();
     league_details.nextMatch = next_match;
     res.send(league_details);
   } catch (error) {
@@ -69,13 +54,15 @@ router.post("/addMatch", async (req, res, next) => {
     const date = req.body.date;
     const time = req.body.time;
     const refereeName = req.body.refereeName;
+    const lineReferee1 = req.body.lineReferee1;
+    const lineReferee2 = req.body.lineReferee2;
     const stadium = req.body.stadium;
     const matchId = await matches_utils.generateRandId();
 
     // insert to DB
     await DB_utils.execQuery(
-      `INSERT INTO dbo.matches (leagueName, seasonName, stageName, homeTeam, awayTeam, refereeName, stadium, date,time,id) VALUES
-       ('${leagueName}','${seasonName}','${stageName}','${homeTeam}','${awayTeam}', '${refereeName}','${stadium}','${date}','${time}','${matchId}');`
+      `INSERT INTO dbo.matches (leagueName, seasonName, stageName, homeTeam, awayTeam, refereeName, lineReferee1, lineReferee2 stadium, date,time,id) VALUES
+       ('${leagueName}','${seasonName}','${stageName}','${homeTeam}','${awayTeam}', '${refereeName}','${lineReferee1}','${lineReferee2}','${stadium}','${date}','${time}','${matchId}');`
     );
 
     res.status(201).send("match added successfully");
