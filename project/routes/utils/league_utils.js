@@ -40,7 +40,14 @@ async function getLeagueDetails() {
       },
     }
   );
-
+  if (league.data.data.current_stage_id == null) {
+    return {
+      leagueName: league.data.data.name,
+      seasonName: league.data.data.season.data.name,
+      stageName: "currently there is no stage available",
+      current_season_id: league.data.data.current_season_id,
+    };
+  }
   const stage = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/stages/${league.data.data.current_stage_id}`,
     {
