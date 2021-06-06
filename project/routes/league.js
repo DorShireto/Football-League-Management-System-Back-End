@@ -6,6 +6,17 @@ const DB_utils = require("./utils/DButils");
 /**
  * Authenticate all incoming requests by middleware
  */
+router.get("/getDetails", async (req, res, next) => {
+  try {
+    let league_details = await league_utils.getLeagueDetails();
+    let next_match = matches_utils.getNextMatch();
+    league_details.nextMatch = next_match;
+    res.send(league_details);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.use(async function (req, res, next) {
   if (req.session && req.session.user_id) {
     DB_utils.execQuery("SELECT user_id FROM dbo.users")
@@ -21,16 +32,7 @@ router.use(async function (req, res, next) {
   }
 });
 
-router.get("/getDetails", async (req, res, next) => {
-  try {
-    let league_details = await league_utils.getLeagueDetails();
-    let next_match = matches_utils.getNextMatch();
-    league_details.nextMatch = next_match;
-    res.send(league_details);
-  } catch (error) {
-    next(error);
-  }
-});
+
 
 // add new match to DB by association member
 router.post("/addMatch", async (req, res, next) => {
