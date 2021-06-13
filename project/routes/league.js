@@ -17,6 +17,7 @@ router.get("/getDetails", async (req, res, next) => {
   }
 });
 
+//check if logged in
 router.use(async function (req, res, next) {
   if (req.session && req.session.user_id) {
     DB_utils.execQuery("SELECT user_id FROM dbo.users")
@@ -32,21 +33,22 @@ router.use(async function (req, res, next) {
   }
 });
 
+//check if user is association member
+router.use(async function (req, res, next) {
+  const user_id = req.session.user_id;
+  const role = await DB_utils.execQuery(`SELECT role FROM dbo.users where user_id ='${user_id}';`)
+  if (role[0].role == "asso_member") {
+    next();
+  }
+  else {
+    res.status(403).send("only association member can add new matches to the system!");
+  }
+});
 
 
 // add new match to DB by association member
 router.post("/addMatch", async (req, res, next) => {
-  //check if logged user is association member role
   try {
-
-    if (req.session && req.session.user_id) {
-      const user_id = req.session.user_id;
-      const role = await DB_utils.execQuery(`SELECT role FROM dbo.users where user_id ='${user_id}';`)
-      if (role[0].role != "asso_member")
-        throw { status: 403, message: "only association member can add new matches to the system!" };
-
-    }
-
     //get data from body
     const leagueName = req.body.leagueName;
     const seasonName = req.body.seasonName;
@@ -74,16 +76,7 @@ router.post("/addMatch", async (req, res, next) => {
 });
 
 router.post("/updateMatchScore", async (req, res, next) => {
-  //check if logged user is association member role
   try {
-
-    if (req.session && req.session.user_id) {
-      const user_id = req.session.user_id;
-      const role = await DB_utils.execQuery(`SELECT role FROM dbo.users where user_id ='${user_id}';`)
-      if (role[0].role != "asso_member")
-        throw { status: 403, message: "only association member can update matches score!" };
-
-    }
 
     //get data from body
     const homeTeamScore = req.body.homeTeamScore;

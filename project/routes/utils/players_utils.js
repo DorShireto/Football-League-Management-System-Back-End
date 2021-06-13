@@ -83,6 +83,7 @@ async function getPlayerFullInfo(playerId) {
     first_name: player.data.data.firstname,
     last_name: player.data.data.lastname,
     nationality: player.data.data.nationality,
+    birthdate: player.data.data.birthdate,
     birthcountry: player.data.data.birthcountry,
     height: player.data.data.height,
     weight: player.data.data.weight
