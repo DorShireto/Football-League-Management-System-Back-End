@@ -41,7 +41,7 @@ router.post("/addPlayer", async (req, res, next) => {
 router.delete("/removePlayer/:playerId", async (req, res) => {
   try {
     let playerId = req.params.playerId;
-    DButils.execQuery(`delete from FavoritePlayers where player_id='${playerId}'`);
+    DButils.execQuery(`delete from FavoritePlayers where player_id='${playerId}' AND user_id='${req.session.user_id}'`);
     res.status(201).send("Successfully removed player from favorite players list");
   }
   catch (error) {
@@ -87,7 +87,7 @@ router.post("/addMatch", async (req, res, next) => {
 router.delete("/removeMatch/:matchId", async (req, res) => {
   try {
     let matchId = req.params.matchId;
-    DButils.execQuery(`delete from FavoriteMatches where match_id='${matchId}'`);
+    DButils.execQuery(`delete from FavoriteMatches where match_id='${matchId}'  AND user_id='${req.session.user_id}'`);
     res.status(201).send("Successfully removed match from favorite matches list");
   }
   catch (error) {
@@ -133,7 +133,7 @@ router.post("/addTeam", async (req, res, next) => {
 router.delete("/removeTeam/:teamId", async (req, res) => {
   try {
     let teamId = req.params.teamId;
-    DButils.execQuery(`delete from FavoriteTeams where team_id='${teamId}'`);
+    DButils.execQuery(`delete from FavoriteTeams where team_id='${teamId}' AND user_id='${req.session.user_id}'`);
     res.status(201).send("Successfully removed team from favorite teams list");
   }
   catch (error) {
