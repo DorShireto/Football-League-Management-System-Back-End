@@ -58,7 +58,8 @@ async function getPlayerPreviewInfo(playerId) {
     name: player.data.data.fullname,
     image: player.data.data.image_path,
     position: player.data.data.position_id,
-    activeTeam: player.data.data.team.data.name
+    activeTeam: player.data.data.team.data.name,
+    id: player.data.data.team.data.id
   };
 }
 

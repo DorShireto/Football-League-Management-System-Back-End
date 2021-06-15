@@ -39,12 +39,13 @@ async function getTeamByID(team_ID) {
     let players = [];
     for (let i = 0; i < squad.length; i++) {
         let player = squad[i];
-        let { fullname, image_path, position_id } = player.player.data;
+        let { fullname, image_path, position_id, player_id } = player.player.data;
         let playerToAdd = {
             fullname: fullname,
             profilePicURL: image_path,
             position: position_id,
             activeTeam: team.name,
+            id: player_id
         };
         players.push(playerToAdd);
     }
@@ -82,6 +83,8 @@ async function getGamesByTeamName(team_Name) {
                 date: new Date(currentGame.date).toJSON().slice(0, 10).replace(/-/g, '/'),
                 time: new Date(currentGame.time).toJSON().slice(11, 19).replace(/-/g, '/'),
                 refereeName: currentGame.refereeName,
+                lineReferee1: currentGame.lineReferee1,
+                lineReferee2: currentGame.lineReferee2,
                 stadium: currentGame.stadium,
                 result: {
                     homeScore: currentGame.homeScore,
