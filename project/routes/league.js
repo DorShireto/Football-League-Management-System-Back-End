@@ -17,6 +17,15 @@ router.get("/getDetails", async (req, res, next) => {
   }
 });
 
+router.get("/matches", async (req, res, next) => {
+  try {
+    let matches = await league_utils.getAllMatches();
+    res.send(matches);
+  } catch (error) {
+    next(error);
+  }
+});
+
 //check if logged in
 router.use(async function (req, res, next) {
   if (req.session && req.session.user_id) {

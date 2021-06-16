@@ -75,10 +75,10 @@ router.get("/checkIfPlayerFavorite/:playerId", async (req, res, next) => {
     const user_id = req.session.user_id;
     const playerId = req.params.playerId;
     const isFavoritePlayer = await users_utils.checkIfFavorite(user_id, playerId);
-    if (isFavoritePlayer) {
-      res.status(200).send()
+    if (isFavoritePlayer === true) {
+      res.send(true);
     }
-    res.status(404).send()
+    res.send(false);
 
   }
   catch (err) {

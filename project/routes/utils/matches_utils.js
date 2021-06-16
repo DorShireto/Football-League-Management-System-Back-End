@@ -38,7 +38,7 @@ async function getEventCalendar(matchId) {
     return new Promise((res, rej) => {
         const results = db_utils.execQuery(`select * from dbo.MatchEventCalendar where matchId='${matchId}'`);
         res(results);
-    })
+    });
 }
 
 //get all data about matches
