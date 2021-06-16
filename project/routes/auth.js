@@ -70,8 +70,11 @@ router.post("/Login", async (req, res, next) => {
     // Set cookie
     req.session.user_id = user.user_id;
 
+    // get role
+    let role = user.role;
+
     // return cookie
-    res.status(200).send("login succeeded");
+    res.status(200).send({ role: role, message: "login succeeded" });
   } catch (error) {
     next(error);
   }

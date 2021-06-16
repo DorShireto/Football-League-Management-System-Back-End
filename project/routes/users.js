@@ -70,6 +70,22 @@ router.get("/favoritePlayers", async (req, res, next) => {
   }
 });
 
+router.get("/checkIfPlayerFavorite/:playerId", async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const playerId = req.params.playerId;
+    const isFavoritePlayer = await users_utils.checkIfFavorite(user_id, playerId);
+    if (isFavoritePlayer) {
+      res.status(200).send()
+    }
+    res.status(404).send()
+
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
 
 
 

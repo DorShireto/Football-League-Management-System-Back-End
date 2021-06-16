@@ -38,6 +38,13 @@ async function getFavoriteTeams(user_id) {
   return team_ids;
 }
 
+async function checkIfFavorite(user_id, player_id) {
+  const res = await DButils.execQuery(`select * FROM dbo.favoriteplayers WHERE user_id='${user_id}' AND player_id='${player_id}'`);
+  if (res.length > 0) return true;
+  return false;
+}
+
+exports.checkIfFavorite = checkIfFavorite;
 exports.getFavoriteMatches = getFavoriteMatches;
 exports.markPlayerAsFavorite = markPlayerAsFavorite;
 exports.markMatchAsFavorite = markMatchAsFavorite;

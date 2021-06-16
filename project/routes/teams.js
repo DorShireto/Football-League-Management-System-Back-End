@@ -41,7 +41,7 @@ router.get("/", async (req, res, next) => {
 
 
 //      """  GET TEAM BY ID """
-router.get("/page/id/:teamId", async (req, res, next) => {
+router.get("/page/:teamId", async (req, res, next) => {
   try {
     const teamDetails = await team_utils.getTeamByID(req.params.teamId);
     res.status(200).send(teamDetails);
