@@ -63,10 +63,10 @@ async function extractRelevantMatchData(matches_info) {
             homeTeam: homeTeam,
             date: new Date(date).toJSON().slice(0, 10).replace(/-/g, '/'),
             time: new Date(time).toJSON().slice(11, 19).replace(/-/g, '/'),
-            result: {
-                awayScore: awayScore,
-                homeScore: homeScore
-            },
+
+            awayScore: awayScore,
+            homeScore: homeScore,
+
             id: id,
             refereeName: refereeName,
             lineReferee1: lineReferee1,
@@ -91,10 +91,10 @@ async function getNextMatch() {
         lineReferee1: match[0].lineReferee1,
         lineReferee2: match[0].lineReferee2,
         stadium: match[0].stadium,
-        result: {
-            "homeScore": match[0].homeScore,
-            "awayScore": match[0].awayScore
-        },
+
+        homeScore: match[0].homeScore,
+        awayScore: match[0].awayScore,
+
         matchEventCalendar: match[0].matchEventCalendar
     }
     return next_match;

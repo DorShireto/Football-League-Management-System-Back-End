@@ -78,7 +78,9 @@ router.get("/checkIfPlayerFavorite/:playerId", async (req, res, next) => {
     if (isFavoritePlayer === true) {
       res.send(true);
     }
-    res.send(false);
+    else {
+      res.send(false);
+    }
 
   }
   catch (err) {

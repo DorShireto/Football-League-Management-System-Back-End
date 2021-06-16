@@ -66,7 +66,6 @@ async function getGamesByTeamName(team_Name) {
 
     const current_date = date_ob;
     try {
-
         let prev_and_future_games = new Object();
         let prevGames = [];
         let futureGames = [];
@@ -86,10 +85,8 @@ async function getGamesByTeamName(team_Name) {
                 lineReferee1: currentGame.lineReferee1,
                 lineReferee2: currentGame.lineReferee2,
                 stadium: currentGame.stadium,
-                result: {
-                    homeScore: currentGame.homeScore,
-                    awayScore: currentGame.awayScore
-                },
+                homeScore: currentGame.homeScore,
+                awayScore: currentGame.awayScore,
                 matchEventCalendar: await matches_utils.getEventCalendar(currentGame.id)
             };
             if (Date.parse(currentGame.date) < Date.parse(current_date)) { // past game
