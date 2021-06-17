@@ -106,5 +106,15 @@ router.post("/updateMatchScore", async (req, res, next) => {
   }
 });
 
+router.post("/addMatchEvent", async (req, res, next) => {
+  try {
+    // insert to DB
+    league_utils.addMatchEvent(req.body);
+    res.status(201).send("match event added successfully");
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 module.exports = router;

@@ -2,6 +2,33 @@ const axios = require("axios");
 const matches_utils = require("./matches_utils");
 const DB_utils = require("./DButils")
 const LEAGUE_ID = 271;
+const MAX_EVENTS_IN_DB = 100000;
+
+//generate random eventId (from 0 to MAX_EVENTS_IN_DB)
+async function generateRandId() {
+  let random_event_id = Math.floor(Math.random() * MAX_EVENTS_IN_DB);
+  let eventsIds = await DB_utils.execQuery(
+    `select eventId from dbo.MatchEventCalendar where eventId = '${random_event_id}'`
+  );
+  while (eventsIds.length !== 0) { // event id already exists. generate new one until finding unused id.
+    random_event_id = Math.floor(Math.random() * MAX_EVENTS_IN_DB);
+    eventsIds = await DB_utils.execQuery(
+      `select eventId from dbo.MatchEventCalendar where eventId = '${random_event_id}'`
+    );
+  }
+  return random_event_id;
+}
+
+async function addMatchEvent(event) {
+  //generate id:
+  eventId = await generateRandId();
+  // insert to DB
+  await DB_utils.execQuery(
+    `INSERT INTO dbo.MatchEventCalendar (minInMatch, description, matchId, eventId, teamName, type, playerName) VALUES
+     ('${event.minInMatch}','${event.description}','${event.matchId}','${eventId}','${event.teamName}', '${event.type}','${event.playerName}');`
+  );
+}
+
 
 async function getSeason(seasonId) {
   const season = await axios.get(
@@ -90,3 +117,4 @@ exports.getAllMatches = getAllMatches;
 exports.getLeagueDetails = getLeagueDetails;
 exports.getSeason = getSeason;
 exports.getStage = getStage;
+exports.addMatchEvent = addMatchEvent;
