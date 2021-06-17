@@ -3,6 +3,7 @@ const api_domain = "https://soccer.sportmonks.com/api/v2.0";
 const players_utils = require("./players_utils");
 const DButils = require("./DButils");
 const matches_utils = require("./matches_utils");
+const { nextTick } = require("process");
 const LEAGUE_ID = 271;
 
 async function getTeams(season_ID) {
@@ -126,46 +127,25 @@ async function getTeamsInfo(team_ids_array) {
         teamsData.push(await getTeamByID(team_ids_array[i]));
     }
     return teamsData;
-    // let teamsData = [];
-    // let futureMatches = [];
-    // let prevMatches = [];
-    // for (let i = 0; i < team_ids_array.length; i++) {
-    //     const teamId = team_ids_array[i];
-    //     let team = await getTeam(teamId);
-    //     //get team games from local DB
-    //     const matchIdsObject = await matches_utils.getMatchIdsByTeam(team.data.data.name);
-    //     let matchIds = matchIdsObject[0];
-    //     if (matchIds.length == 0)
-    //         throw new Error("no matches for that team");
-    //     let matches = await matches_utils.getMatchesInfo(matchIds[0]);
-    //     let today = new Date();
-    //     matches.foreach(match => {
-    //         if (match.date > today)
-    //             futureMatches.push(match);
-    //         else
-    //             prevMatches.push(match);
-    //     })
-    //     teamsData.push({
-    //         players: team.squad,
-    //         prevMatches: prevMatches,
-    //         futureMatches: futureMatches,
-    //         name: team.name,
-    //         logoURL: team.logo_path,
-    //     });
-    // }
-    // return teamsData;
 }
 
+async function getTeamIdByName(teamName) {
+    try {
+        let id = await DButils.execQuery(`select teamId from dbo.teams where teamName='${teamName}'`)
+        return id[0];
 
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+exports.getTeamIdByName = getTeamIdByName;
 exports.getTeamByID = getTeamByID;
 exports.getTeams = getTeams;
 exports.getGamesByTeamName = getGamesByTeamName;
-// exports.getTeamByName = getTeamByName;
+
 exports.getTeam = getTeam;
 exports.getTeamsInfo = getTeamsInfo;
 
-
-
-// getTeamByName("Horsens");
-// getTeamByID(211);
 

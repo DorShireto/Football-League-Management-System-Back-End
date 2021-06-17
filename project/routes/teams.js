@@ -50,6 +50,15 @@ router.get("/page/:teamId", async (req, res, next) => {
   }
 });
 
+router.get("/:teamName/id", async (req, res, next) => {
+  try {
+    const teamId = await team_utils.getTeamIdByName(req.params.teamName);
+    res.status(200).send(teamId);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 //      """  GET TEAM BY NAME """
 router.get("/page/name/:teamName", async (req, res, next) => {
