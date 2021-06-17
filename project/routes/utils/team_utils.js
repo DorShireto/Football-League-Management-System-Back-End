@@ -16,7 +16,7 @@ async function getTeams(season_ID) {
     let teamsArray = [];
     for (let i = 0; i < teams_unfilterd.data.data.length; i++) {
         let team = teams_unfilterd.data.data[i];
-        console.log(team);
+        // console.log(team);
         let teamDetails = await getTeamByID(team.id);
         teamsArray.push(teamDetails);
     }
@@ -24,7 +24,7 @@ async function getTeams(season_ID) {
 }
 
 async function getTeamByID(team_ID) {
-    console.log(team_ID);
+    // console.log(team_ID);
     let team = await axios.get(`${api_domain}/teams/${team_ID}`, {
         params:
         {
@@ -56,7 +56,7 @@ async function getTeamByID(team_ID) {
         name: team.name,
         logoURL: team.logo_path
     };
-    console.log(teamDetails);
+    // console.log(teamDetails);
     return teamDetails;
 }
 

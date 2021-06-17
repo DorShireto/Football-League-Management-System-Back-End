@@ -26,9 +26,9 @@ router.get("/", async (req, res, next) => {
   //get season_ID by current league
   try {
     let leagueDetails = await league_utils.getLeagueDetails();
-    console.log(leagueDetails);
+    // console.log(leagueDetails);
     let season_ID = leagueDetails.current_season_id;
-    console.log("Season id: ", season_ID);
+    // console.log("Season id: ", season_ID);
     let teamsArray = await team_utils.getTeams(season_ID);
     res.status(200).send(teamsArray);
     // res.status(200).send("teamsArray");

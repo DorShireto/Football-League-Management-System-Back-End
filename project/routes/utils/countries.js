@@ -13,7 +13,7 @@ async function getCountries() {
         countries_withFlags_list.push(country_obj);
     }
 
-    console.log(countries_withFlags_list);
+    // console.log(countries_withFlags_list);
     return countries_withFlags_list;
 }
 getCountries();
