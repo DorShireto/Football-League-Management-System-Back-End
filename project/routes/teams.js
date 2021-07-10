@@ -39,6 +39,20 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/names", async (req, res, next) => {
+  //get all teams names
+  try {
+    let teamsArray = await team_utils.getTeamsNames();
+    res.status(200).send(teamsArray);
+    // res.status(200).send("teamsArray");
+
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
+
 
 //      """  GET TEAM BY ID """
 router.get("/page/:teamId", async (req, res, next) => {

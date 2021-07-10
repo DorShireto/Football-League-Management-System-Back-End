@@ -6,6 +6,13 @@ const matches_utils = require("./matches_utils");
 const { nextTick } = require("process");
 const LEAGUE_ID = 271;
 
+async function getTeamsNames() {
+    const names = await DButils.execQuery(`SELECT name FROM dbo.teams;`)
+    return names;
+
+}
+
+
 async function getTeams(season_ID) {
     console.log("getTeams season_id: ", season_ID);
     let teams_unfilterd = await axios.get(`${api_domain}/teams/season/${season_ID}`, {
