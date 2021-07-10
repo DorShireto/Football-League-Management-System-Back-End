@@ -76,6 +76,10 @@ async function extractRelevantMatchData(matches_info) {
     });
 }
 
+async function editScore(matchId, homeScore, awayScore) {
+    await db_utils.execQuery(`UPDATE dbo.matches SET homeScore='${homeScore}',awayScore=${awayScore} WHERE id=${matchId}`);
+}
+
 //returns future match closest to current date time
 async function getNextMatch() {
     const match = await db_utils.execQuery("select TOP 1 * from dbo.matches where date > CURRENT_TIMESTAMP order by date,time;");
@@ -105,3 +109,4 @@ exports.getMatchesInfo = getMatchesInfo;
 exports.getEventCalendar = getEventCalendar;
 exports.generateRandId = generateRandId;
 exports.getNextMatch = getNextMatch;
+exports.editScore = editScore;

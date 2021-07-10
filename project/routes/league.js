@@ -26,6 +26,9 @@ router.get("/matches", async (req, res, next) => {
   }
 });
 
+
+
+
 //check if logged in
 router.use(async function (req, res, next) {
   if (req.session && req.session.user_id) {
@@ -42,6 +45,9 @@ router.use(async function (req, res, next) {
   }
 });
 
+
+
+
 //check if user is association member
 router.use(async function (req, res, next) {
   const user_id = req.session.user_id;
@@ -53,7 +59,22 @@ router.use(async function (req, res, next) {
     res.status(403).send("only association member can add new matches to the system!");
   }
 });
-
+router.get("/mainReferees", async (req, res, next) => {
+  try {
+    let referees = await league_utils.getMainRefereesNames();
+    res.send(referees);
+  } catch (error) {
+    next(error);
+  }
+});
+router.get("/lineReferees", async (req, res, next) => {
+  try {
+    let referees = await league_utils.getLineRefereesNames();
+    res.send(referees);
+  } catch (error) {
+    next(error);
+  }
+});
 
 // add new match to DB by association member
 router.post("/addMatch", async (req, res, next) => {
@@ -84,7 +105,7 @@ router.post("/addMatch", async (req, res, next) => {
   }
 });
 
-router.post("/updateMatchScore", async (req, res, next) => {
+router.put("/updateMatchScore", async (req, res, next) => {
   try {
 
     //get data from body
@@ -115,6 +136,8 @@ router.post("/addMatchEvent", async (req, res, next) => {
     next(error);
   }
 });
+
+
 
 
 module.exports = router;

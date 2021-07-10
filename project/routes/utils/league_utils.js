@@ -30,6 +30,24 @@ async function addMatchEvent(event) {
 }
 
 
+async function getMainRefereesNames() {
+  let mainRefereesNames = [];
+  const refs = await DB_utils.execQuery(`select name FROM dbo.referees WHERE role='main';`);
+  refs.forEach(ref => {
+    mainRefereesNames.push(ref.name);
+  });
+  return mainRefereesNames;
+}
+
+async function getLineRefereesNames() {
+  let lineRefereesNames = [];
+  const refs = await DB_utils.execQuery(`select name FROM dbo.referees WHERE role='line';`);
+  refs.forEach(ref => {
+    lineRefereesNames.push(ref.name);
+  });
+  return lineRefereesNames;
+}
+
 async function getSeason(seasonId) {
   const season = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/seasons/${seasonId}`,
@@ -118,3 +136,5 @@ exports.getLeagueDetails = getLeagueDetails;
 exports.getSeason = getSeason;
 exports.getStage = getStage;
 exports.addMatchEvent = addMatchEvent;
+exports.getMainRefereesNames = getMainRefereesNames;
+exports.getLineRefereesNames = getLineRefereesNames;

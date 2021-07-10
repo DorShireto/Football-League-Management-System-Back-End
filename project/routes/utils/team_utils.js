@@ -7,7 +7,7 @@ const { nextTick } = require("process");
 const LEAGUE_ID = 271;
 
 async function getTeamsNames() {
-    const names = await DButils.execQuery(`SELECT name FROM dbo.teams;`)
+    const names = await DButils.execQuery(`SELECT teamName FROM dbo.teams;`)
     return names;
 
 }
@@ -151,7 +151,7 @@ exports.getTeamIdByName = getTeamIdByName;
 exports.getTeamByID = getTeamByID;
 exports.getTeams = getTeams;
 exports.getGamesByTeamName = getGamesByTeamName;
-
+exports.getTeamsNames = getTeamsNames;
 exports.getTeam = getTeam;
 exports.getTeamsInfo = getTeamsInfo;
 
